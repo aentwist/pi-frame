@@ -1,6 +1,6 @@
 FROM python:3.8-buster
 ENV FLASK_APP=app.py
-WORKDIR /var/www/full-frame
+WORKDIR /var/www/full-frame/code
 
 COPY requirements.txt .
 RUN pip install -r requirements.txt
