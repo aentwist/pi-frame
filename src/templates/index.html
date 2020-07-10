@@ -30,14 +30,24 @@
 
   <body>
     <div>
+      <h1>Index for {{ path }}:</h1>
       <ul>
-        {{ for dir in dirs }}
-          <li>{{ dir }}</li>
-        {{ endfor }}
-        {{ for file in files }}
-          <li>{{ file }}</li>
-        {{ endofor }}
+        {% for dir in dirs: %}
+        <li><a href="{{ url_for('index', path=path + '/' + dir) }}">{{ dir }}</a></li>
+        {% endfor %}
       </ul>
+
+      <ul>
+        <li><a href="#">Upload</a></li>
+        <li><a href="#">Download</a></li>
+        <li><a href="#">Edit Slideshows</a></li>
+      </ul>
+    </div>
+
+    <div>
+      {% for file in files: %}
+      <div><a href="#">{{ file }}</a></div>
+      {% endfor %}
     </div>
   </body>
 </html>
