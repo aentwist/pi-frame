@@ -1,14 +1,16 @@
-import os
-import subprocess
-
-from app import app
+from . import app
 from flask import request, render_template, redirect, url_for, abort, flash 
 from werkzeug.utils import secure_filename
+
+import os
+import subprocess
 
 
 FRAME_HOST = "pi@192.168.1.31"
 slide_t = "1"
 blend_t = "2"
+
+upload_folder = app.config["UPLOAD_FOLDER"]
 
 
 @app.route("/", methods=["GET", "POST"])

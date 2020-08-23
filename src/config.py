@@ -11,7 +11,7 @@ class DevConfig(Config):
 
 
 class TestConfig(Config):
-    false
+    UPLOAD_FOLDER = ""
 
 
 class ProdConfig(Config):
