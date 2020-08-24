@@ -1,13 +1,16 @@
 from . import images
 
 from flask_wtf import FlaskForm
-from flask_wtf.file import FileField, FileAllowed, FileRequired
-from wtforms import StringField, SubmitField
+from flask_wtf.file import FileAllowed, FileRequired
+from wtforms import StringField, SubmitField, MultipleFileField
 from wtforms.validators import InputRequired
 
 
 class UploadForm(FlaskForm):
-    f = FileField("File", validators=[FileRequired(), FileAllowed(images, "Image file type not supported.")])
+    # Valdiation for MultipleFileField is currently unsupported.
+    # https://github.com/lepture/flask-wtf/issues/337
+    # validators=[FilesRequired(), FilesAllowed(images, "Image file type not supported")]
+    files = MultipleFileField("Files")
     submit = SubmitField("Upload")
 
 

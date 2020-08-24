@@ -1,0 +1,56 @@
+:root {
+    --border-light: 1px solid lightgrey;
+    --border-dark: 1px solid black;
+    --box-shadow: 0 0 5px 0 grey;
+}
+
+.file {
+    padding: 0;
+    border: var(--border-light);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.file-img-top {
+    width: 100%;
+    height: 25vh;
+    object-fit: contain;
+}
+
+.file-name {
+    border-top: var(--border-light);
+}
+
+#contentLeft {
+    border-right: var(--border-dark);
+}
+
+#contentMiddle {
+    padding: 0;
+    overflow: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+#contentMiddle::-webkit-scrollbar {
+    display: none;
+}
+
+#contentRight {
+    border-left: var(--border-dark);
+}
+
+#contentLeft,
+#contentRight {
+    box-shadow: var(--box-shadow);
+}
+
+#contentLeft,
+#contentMiddle,
+#contentRight {
+    height: 100vh;
+}
+
+header {
+    border-bottom: var(--border-dark);
+}

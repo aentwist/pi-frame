@@ -3,6 +3,7 @@ from .forms import UploadForm, CreateFolderForm
 
 from flask import request, render_template, render_template_string, redirect,\
         url_for, abort, flash, send_from_directory
+from werkzeug.utils import secure_filename
 
 import os
 import subprocess
@@ -27,9 +28,10 @@ def index(rel_path=""):
     create_folder_form = CreateFolderForm()
 
     if upload_form.submit.data and upload_form.validate():
-        images.save(request.files["f"], rel_path)  # rel_path is fp here
-        rel_path, fname = os.path.split(rel_path)
-        flash(f"Successfully uploaded file {fname}")
+        for f in upload_form.files.data:
+            fname = secure_filename(f.filename)
+            images.save(f, rel_path, fname)
+        flash("Files uploaded successfully")
         # Redirect to follow the post, redirect, get pattern.
         return redirect(url_for("index", rel_path=rel_path))
 
