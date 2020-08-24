@@ -3,16 +3,16 @@ import os
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY") or "deep_fried_lemons"
-    ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png"}
+    FRAME_HOST = "pi@192.168.1.31"
 
 
 class DevConfig(Config):
-    UPLOAD_FOLDER = "/var/www/full-frame/uploads"
+    UPLOADS_DEFAULT_DEST = "/var/www/full-frame/uploads"
 
 
 class TestConfig(Config):
-    UPLOAD_FOLDER = ""
+    UPLOADS_DEFAULT_DEST = ""
 
 
 class ProdConfig(Config):
-    UPLOAD_FOLDER = "/mnt/hdd/shared"
+    UPLOADS_DEFAULT_DEST = "/mnt/hdd/shared"

@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>{{ path }}</title>
+        <title>{{ root_path }}</title>
         <meta name="description" content="{{ path }}">
 
         <!--Include Bootstrap.-->
@@ -29,15 +29,29 @@
 
     <body>
         <div>
-            <h1>Index for {{ path }}:</h1>
+            <h1>Index for {{ root_path }}:</h1>
             <ul>
                 {% for dir in dirs: %}
-                <li><a href="{{ url_for('index', path=path + '/' + dir) }}">{{ dir }}</a></li>
+                <li><a href="{{ url_for('index', rel_path=root_path + '/' + dir) }}">{{ dir }}</a></li>
                 {% endfor %}
             </ul>
 
             <ul>
-                <li><a href="#">Upload</a></li>
+                <li>
+                    <a data-toggle="collapse" href="#upload" role="button"
+                        aria-expanded="false" aria-controls="upload">Upload</a>
+                        <div id="upload" class="collapse">
+                            <form class="form-inline" action="" method="POST" enctype="multipart/form-data">
+                                {{ upload_form.csrf_token }}
+                                <div class="input-group">
+                                    {{ upload_form.f(class="form-control") }}
+                                    <div class="input-group-append">
+                                        {{ upload_form.submit(class="btn btn-primary") }}
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                </li>
                 <li><a href="#">Download</a></li>
                 <li><a href="#">Edit Slideshows</a></li>
                 <li>
@@ -60,7 +74,13 @@
 
         <div>
             {% for file in files: %}
-            <div><a href="#">{{ file }}</a></div>
+            <div>
+                <a href="#">{{ file }}</a>
+                <div>
+                    <img src="{{ url_for('file', rel_fp=file if root_path == '/' else root_path + '/' + file) }}"
+                            alt="Image currently unavailable">
+                </div>
+            </div>
             {% endfor %}
         </div>
     </body>
