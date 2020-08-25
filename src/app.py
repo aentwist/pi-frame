@@ -13,13 +13,9 @@ upload_folder = app.config["UPLOADS_DEFAULT_DEST"]
 
 
 @app.route("/", methods=["GET", "POST"])
-@app.route("/<path:rel_path>", methods=["GET", "POST"])
+@app.route("/folder", methods=["GET", "POST"])
+@app.route("/folder/<path:rel_path>", methods=["GET", "POST"])
 def index(rel_path=""):
-    # If the request is hitting the wrong route, redirect it.
-    if len(rel_path) >= 5 and rel_path[0:4] == "util/":
-        rel_fp = rel_path
-        return redirect(url_for("file", rel_fp=rel_fp))
-
     abs_path = os.path.join(upload_folder, rel_path)
     root_path = os.path.join("/", rel_path)
 
@@ -49,7 +45,7 @@ def index(rel_path=""):
             upload_form=upload_form, create_folder_form=create_folder_form)
 
 
-@app.route("/util/file/<path:rel_fp>")
+@app.route("/file/<path:rel_fp>")
 def file(rel_fp):
     rel_path, fname = os.path.split(rel_fp)
     abs_path = os.path.join(upload_folder, rel_path)
