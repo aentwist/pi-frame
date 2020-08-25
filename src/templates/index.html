@@ -49,7 +49,7 @@
                         <div class="col-12 col-sm-6 col-md-4 col-lg-3 p-0">
                             <div class="file mr-3 mb-3 text-left">
                                 <div class="file-icon-container flex-row align-items-center mr-3 pr-1 mb-3">
-                                    <a class="file-icon-link" href="#" download>
+                                    <a class="file-icon-link" href="{{ url_for('file', rel_fp=file if root_path == '/' else root_path + '/' + file) }}" download>
                                         <svg class="file-icon bi" fill="currentColor">
                                             <use href="{{ url_for('static', filename='bootstrap-icons.svg') }}#box-arrow-in-down" />
                                         </svg>
