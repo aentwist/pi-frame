@@ -10,7 +10,7 @@ class UploadForm(FlaskForm):
     # Valdiation for MultipleFileField is currently unsupported.
     # https://github.com/lepture/flask-wtf/issues/337
     # validators=[FilesRequired(), FilesAllowed(images, "Image file type not supported")]
-    files = MultipleFileField("Files")
+    files = MultipleFileField("Select files")
     submit = SubmitField("Upload")
 
 
