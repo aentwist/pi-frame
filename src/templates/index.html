@@ -25,6 +25,7 @@
                 src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
                 integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
                 crossorigin="anonymous"></script>
+        <script defer src="{{ url_for('static', filename='delete.js') }}"></script>
     </head>
 
     <body>
@@ -48,19 +49,19 @@
                         <div class="col-12 col-sm-6 col-md-4 col-lg-3 p-0">
                             <div class="file mr-3 mb-3 text-left">
                                 <div class="file-icon-container flex-row align-items-center mr-3 pr-1 mb-3">
-                                    <a class="file-icon-link" href="{{ url_for('file', rel_fp=file if root_path == '/' else root_path + '/' + file) }}" download>
+                                    <a class="file-icon-link" href="{{ url_for('get_file', rel_fp=file if root_path == '/' else root_path + '/' + file) }}" download>
                                         <svg class="file-icon bi" fill="currentColor">
                                             <use href="{{ url_for('static', filename='bootstrap-icons.svg') }}#box-arrow-in-down" />
                                         </svg>
                                     </a>
-                                    <a class="file-icon-link" href="#">
+                                    <a class="file-icon-link" href="#" title="Delete file" onclick="deleteFile('{{ rel_path }}', '{{ file }}'); return false;">
                                         <svg class="file-icon bi" fill="currentColor">
                                             <use href="{{ url_for('static', filename='bootstrap-icons.svg') }}#trash" />
                                         </svg>
                                     </a>
                                 </div>
                                 <img class="file-img-top"
-                                        src="{{ url_for('file', rel_fp=file if root_path == '/' else root_path + '/' + file) }}"
+                                        src="{{ url_for('get_file', rel_fp=file if root_path == '/' else root_path + '/' + file) }}"
                                         alt="Image currently unavailable">
                                 <div class="file-name bg-light pl-1">
                                     <small class="text-muted">{{ file }}</small>
@@ -87,7 +88,7 @@
                                         {{ upload_form.files(class="custom-file-input") }}
                                         {{ upload_form.files.label(class="custom-file-label justify-content-start") }}
                                     </div>
-                                    {{ upload_form.submit(class="btn btn-outline-primary btn-block") }}
+                                    {{ upload_form.upload_submit(class="btn btn-outline-primary btn-block") }}
                                 </form>
                             </div>
                     </li>
@@ -102,7 +103,7 @@
                             <div class="input-group">
                                 {{ create_folder_form.folder_name(class="form-control") }}
                                 <div class="input-group-append">
-                                    {{ create_folder_form.submit(class="btn btn-outline-primary") }}
+                                    {{ create_folder_form.create_folder_submit(class="btn btn-outline-primary") }}
                                 </div>
                             </div>
                         </form>
