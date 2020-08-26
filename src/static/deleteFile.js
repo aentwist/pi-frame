@@ -6,7 +6,6 @@
  *     the file, in relation to the server's uploads directory.
  * @param {!String} fname
  */
-
 async function deleteFile(rel_path, fname) {
     let conf = confirm(`Are you sure you want to delete ${fname}? This operation cannot be undone.`);
     if (conf) {

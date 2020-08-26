@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>{{ root_path }}</title>
+        <title>{{ "/" + rel_path }}</title>
         <meta name="description" content="{{ path }}">
 
         <link rel="stylesheet"
@@ -33,14 +33,14 @@
             <nav id="contentLeft" class="col-2 bg-light">
                 <ul>
                     {% for dir in dirs: %}
-                    <li><a href="{{ url_for('index', rel_path=root_path + '/' + dir) }}">{{ dir }}</a></li>
+                    <li><a href="{{ url_for('index', rel_path=rel_path + '/' + dir) }}">{{ dir }}</a></li>
                     {% endfor %}
                 </ul>
             </nav>
 
             <div id="contentMiddle" class="col">
                 <header class="text-center py-3">
-                    <h1>Index for {{ root_path }}:</h1>
+                    <h1>Index for {{ "/" + rel_path }}:</h1>
                 </header>
 
                 <main class="mx-3 pt-3">
@@ -49,7 +49,7 @@
                         <div class="col-12 col-sm-6 col-md-4 col-lg-3 p-0">
                             <div class="file mr-3 mb-3 text-left">
                                 <div class="file-icon-container flex-row align-items-center mr-3 pr-1 mb-3">
-                                    <a class="file-icon-link" href="{{ url_for('get_file', rel_fp=file if root_path == '/' else root_path + '/' + file) }}" download>
+                                    <a class="file-icon-link" href="{{ url_for('get_file', rel_fp=file if not rel_path else rel_path + '/' + file) }}" download>
                                         <svg class="file-icon bi" fill="currentColor">
                                             <use href="{{ url_for('static', filename='bootstrap-icons.svg') }}#box-arrow-in-down" />
                                         </svg>
@@ -61,7 +61,7 @@
                                     </a>
                                 </div>
                                 <img class="file-img-top"
-                                        src="{{ url_for('get_file', rel_fp=file if root_path == '/' else root_path + '/' + file) }}"
+                                        src="{{ url_for('get_file', rel_fp=file if not rel_path else rel_path + '/' + file) }}"
                                         alt="Image currently unavailable">
                                 <div class="file-name bg-light pl-1">
                                     <small class="text-muted">{{ file }}</small>
@@ -82,13 +82,14 @@
                         <a class="nav-link" data-toggle="collapse" href="#upload" role="button"
                             aria-expanded="false" aria-controls="upload">Upload</a>
                             <div id="upload" class="collapse">
-                                <form class="form-inline" action="" method="POST" enctype="multipart/form-data">
+                                <form class="form-inline" action="{{ url_for('post_files', rel_path=rel_path) }}"
+                                        method="POST" enctype="multipart/form-data">
                                     {{ upload_form.csrf_token }}
                                     <div class="custom-file mb-2">
                                         {{ upload_form.files(class="custom-file-input") }}
                                         {{ upload_form.files.label(class="custom-file-label justify-content-start") }}
                                     </div>
-                                    {{ upload_form.upload_submit(class="btn btn-outline-primary btn-block") }}
+                                    {{ upload_form.submit(class="btn btn-outline-primary btn-block") }}
                                 </form>
                             </div>
                     </li>

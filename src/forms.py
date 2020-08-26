@@ -11,7 +11,7 @@ class UploadForm(FlaskForm):
     # https://github.com/lepture/flask-wtf/issues/337
     # validators=[FilesRequired(), FilesAllowed(images, "Image file type not supported")]
     files = MultipleFileField("Select files")
-    upload_submit = SubmitField("Upload")
+    submit = SubmitField("Upload")
 
 
 class CreateFolderForm(FlaskForm):
