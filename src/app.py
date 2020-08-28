@@ -9,6 +9,8 @@ import os
 import subprocess
 
 
+RESULTS_PER_PAGE = 24
+
 upload_folder = app.config["UPLOADS_DEFAULT_DEST"]
 
 
@@ -21,20 +23,26 @@ def root():
 @app.route("/folder/<path:rel_path>", methods=["GET", "POST"])
 def index(rel_path=""):
     abs_path = os.path.join(upload_folder, rel_path)
+    page = 1 if "page" not in request.args else int(request.args["page"])
 
     # Handle the page's folder manipulation forms.
     create_folder_form = CreateFolderForm()
     if create_folder_form.create_folder_submit.data and create_folder_form.validate():
         folder_path = os.path.join(abs_path, create_folder_form.folder_name.data)
         os.mkdir(folder_path)
-        return redirect(url_for("index", rel_path=rel_path))
+        return redirect(url_for("index", rel_path=rel_path, page=page))
 
     # Display the contents of the current directory.
     if not os.path.isdir(abs_path):
         abort(404)
     _, dirs, files = next(os.walk(abs_path))
+    file_count = len(files)
+    page_start = (page - 1) * RESULTS_PER_PAGE
+    page_end = min(page * RESULTS_PER_PAGE, file_count)
 
-    return render_template("index.html", rel_path=rel_path, dirs=dirs, files=files,
+    return render_template("index.html", rel_path=rel_path, dirs=dirs,
+            files=files[page_start:page_end], file_count=file_count,
+            page=page, results_per_page=RESULTS_PER_PAGE,
             upload_form=UploadForm(), create_folder_form=create_folder_form)
 
 
@@ -48,6 +56,8 @@ def get_file(rel_fp):
 @app.route("/file/post/", methods=["POST"])
 @app.route("/file/post/<path:rel_path>", methods=["POST"])
 def post_files(rel_path=""):
+    page = request.args["page"] if request.args["page"] else 1
+
     form = UploadForm()
     if form.validate():
         for f in form.files.data:
@@ -55,7 +65,7 @@ def post_files(rel_path=""):
             images.save(f, rel_path, fname)
         flash("Files uploaded successfully")
         # Redirect to follow the post, redirect, get pattern.
-        return redirect(url_for("index", rel_path=rel_path))
+        return redirect(url_for("index", rel_path=rel_path, page=page))
 
 
 @app.route("/file/delete/<path:rel_fp>", methods=["DELETE"])
