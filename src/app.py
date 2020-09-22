@@ -85,14 +85,14 @@ blend_t = "2"
 @app.route("/slideshow/start/<path:rel_path>")
 # TODO: Support slideshow customization rather than all images in directory.
 def start_slideshow(rel_path=""):
-    subprocess.run(["ssh", "-T", app.config["FRAME_HOST"], "sudo", "fbi", "-T", "1", "-t", slide_t,
+    subprocess.run(["sudo", "fbi", "-T", "1", "-t", slide_t,
             "--blend", blend_t, "--readahead", "-a", "--noverbose",
-            os.path.join(app.config["SLIDESHOW_DEFAULT_PATH"], rel_path, "*")])  # -l fname
+            os.path.join(upload_folder, rel_path, "*")])  # -l fname
     return Response(f"Slideshow of /{rel_path if not rel_path else rel_path + '/'}* started",
             200, mimetype="text/plain")
 
 
 @app.route("/slideshow/stop")
 def stop_slideshow():
-    subprocess.run(["ssh", "-T", app.config["FRAME_HOST"], "sudo", "kill", "'$(pgrep fbi)'"])
+    subprocess.run(["sudo", "kill", "$(pgrep fbi)"])
     return Response("Slideshow stopped", 200, mimetype="text/plain")
