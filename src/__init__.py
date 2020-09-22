@@ -23,14 +23,16 @@ uploads_default_dest = app.config["UPLOADS_DEFAULT_DEST"]
 app.config["UPLOADED_IMAGES_DEST"] = uploads_default_dest
 configure_uploads(app, images)
 
+if not os.path.isdir(uploads_default_dest):
+    os.mkdir(uploads_default_dest)
+
 # Define configuration for specific environments.
 if env == "production":
-    False
+    pass
 elif env == "test":
-    False
+    pass
 else:
-    if not os.path.isdir(uploads_default_dest):
-        os.mkdir(uploads_default_dest)
+    pass
 
 
 #from .app import app

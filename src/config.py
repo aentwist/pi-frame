@@ -3,18 +3,17 @@ import os
 
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY") or "deep_fried_lemons"
-    FRAME_HOST = "pi@192.168.1.31"
-    SLIDESHOW_DEFAULT_PATH = "/mnt/nas"
+    UPLOADS_DEFAULT_DEST = "/var/www/full-frame/uploads"
     RESULTS_PER_PAGE = 24
 
 
 class DevConfig(Config):
-    UPLOADS_DEFAULT_DEST = "/var/www/full-frame/uploads"
+    pass
 
 
 class TestConfig(Config):
-    UPLOADS_DEFAULT_DEST = ""
+    pass
 
 
 class ProdConfig(Config):
-    UPLOADS_DEFAULT_DEST = "/mnt/hdd/shared"
+    pass
