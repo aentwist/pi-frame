@@ -85,14 +85,24 @@ blend_t = "2"
 @app.route("/slideshow/start/<path:rel_path>")
 # TODO: Support slideshow customization rather than all images in directory.
 def start_slideshow(rel_path=""):
-    subprocess.run(["sudo", "fbi", "-T", "1", "-t", slide_t,
-            "--blend", blend_t, "--readahead", "-a", "--noverbose",
-            os.path.join(upload_folder, rel_path, "*")])  # -l fname
-    return Response(f"Slideshow of /{rel_path if not rel_path else rel_path + '/'}* started",
-            200, mimetype="text/plain")
+    # fbi fails to provide correct feedback using STDERR.
+    result = subprocess.run("sudo fbi -T 1 --readahead -a --noverbose " +
+            f"-t {slide_t} --blend {blend_t} " +
+            os.path.join(upload_folder, rel_path, '*'),  # -l fname
+            shell=True, capture_output=True)
+    response_text = f"Slideshow of /{rel_path + '/' if rel_path else ''}* started"
+    response_code = 200
+    return Response(response_text, response_code, mimetype="text/plain")
 
 
 @app.route("/slideshow/stop")
 def stop_slideshow():
-    subprocess.run(["sudo", "kill", "$(pgrep fbi)"])
-    return Response("Slideshow stopped", 200, mimetype="text/plain")
+    result = subprocess.run("sudo kill $(pgrep fbi)",
+            shell=True, capture_output=True)
+    if result.stderr:
+        response_text = result.stderr
+        response_code = 500
+    else:
+        response_text = "Slideshow stopped"
+        response_code = 200
+    return Response(response_text, response_code, mimetype="text/plain")
