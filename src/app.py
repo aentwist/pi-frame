@@ -94,5 +94,11 @@ def start_slideshow(rel_path=""):
 
 @app.route("/slideshow/stop")
 def stop_slideshow():
-    subprocess.run(["sudo", "kill", "$(pgrep fbi)"])
-    return Response("Slideshow stopped", 200, mimetype="text/plain")
+    result = subprocess.run(["sudo", "kill", "$(pgrep fbi)"], capture_output=True)
+    if result.stderr:
+        response_text = result.stderr
+        response_code = 500
+    else:
+        response_text = "Slideshow stopped"
+        response_code = 200
+    return Response(response_text, response_code, mimetype="text/plain")
