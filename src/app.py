@@ -106,18 +106,23 @@ def start_slideshow(rel_path=""):
 
 @app.route("/slideshow/stop")
 def stop_slideshow():
-    fim.terminate()
-    # Clear the framebuffer (assume the default framebuffer device fb0). This
-    # will always produce a no space left on device error as the zeros device
-    # zero has infinite bytes.
-    subprocess.run(
-        "sudo cp /dev/zero /dev/fb0",
-        shell=True
-    )
-    # if stop_result.stderr:
-    #     response_text = stop_result.stderr
-    #     response_code = 500
-    # else:
     response_text = "Slideshow stopped"
     response_code = 200
+
+    if not fim:
+        response_text = "No slideshow"
+        response_code = 500
+    else:
+        fim.kill()
+        # Clear the framebuffer (assume the default framebuffer device fb0). This
+        # will always produce a no space left on device error as the zeros device
+        # zero has infinite bytes.
+        subprocess.run(
+            "sudo cp /dev/zero /dev/fb0",
+            shell=True
+        )
+        # if stop_result.stderr:
+        #     response_text = stop_result.stderr
+        #     response_code = 500
+
     return Response(response_text, response_code, mimetype="text/plain")
