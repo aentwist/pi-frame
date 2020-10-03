@@ -54,6 +54,7 @@ def get_file(rel_fp):
 
 @app.route("/file/post/", methods=["POST"])
 @app.route("/file/post/<path:rel_path>", methods=["POST"])
+# TODO: Reload the current slideshow after uploading to its domain.
 def post_files(rel_path=""):
     page = request.args["page"] if request.args["page"] else 1
 
@@ -77,30 +78,44 @@ def delete_file(rel_fp):
     return Response("File deleted successfully", 200, mimetype="text/plain")
 
 
-slide_t = "1"
-blend_t = "2"
+slide_t = "10"
+quiet = True
+subcontents = False
 
 
 @app.route("/slideshow/start/")
 @app.route("/slideshow/start/<path:rel_path>")
 # TODO: Support slideshow customization rather than all images in directory.
 def start_slideshow(rel_path=""):
-    # fbi fails to provide correct feedback using STDERR.
-    result = subprocess.run("sudo fbi -T 1 --readahead -a --noverbose " +
-            f"-t {slide_t} --blend {blend_t} " +
-            os.path.join(upload_folder, rel_path, '*'),  # -l fname
-            shell=True, capture_output=True)
-    response_text = f"Slideshow of /{rel_path + '/' if rel_path else ''}* started"
-    response_code = 200
+    # Use * for all subfolder contents vs. just current folder contents.
+    start_result = subprocess.run(
+        f"sudo fim -T 9 {'-q ' if quiet else ''}-c " +
+        f"'while (1) {{ display; sleep {slide_t}; next; }}' " +
+        os.path.join(upload_folder, rel_path, "*" if subcontents else ""),
+        shell=True, capture_output=True
+    )
+    if start_result.stderr:
+        response_text = start_result.stderr
+        response_code = 500
+    else:
+        response_text = f"Slideshow of /{rel_path + '/' if rel_path else ''} started"
+        response_code = 200
     return Response(response_text, response_code, mimetype="text/plain")
 
 
 @app.route("/slideshow/stop")
 def stop_slideshow():
-    result = subprocess.run("sudo kill $(pgrep fbi)",
-            shell=True, capture_output=True)
-    if result.stderr:
-        response_text = result.stderr
+    stop_result = subprocess.run(
+        "sudo pkill fim",
+        shell=True, capture_output=True
+    )
+    # Clear the framebuffer (assume the default framebuffer device fb0).
+    clear_result = subprocess.run(
+        "sudo cp /dev/zero /dev/fb0",
+        shell=True, capture_output=True
+    )
+    if stop_result.stderr or clear_result.stderr:
+        response_text = stop_result.stderr if stop_result.stderr else clear_result.stderr
         response_code = 500
     else:
         response_text = "Slideshow stopped"
