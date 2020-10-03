@@ -90,10 +90,9 @@ def start_slideshow(rel_path=""):
     # Use * for all subfolder contents.
     global fim
     fim = subprocess.Popen(
-        f"sudo fim -T 9 {'-q ' if quiet else ''}-c " +
+        f"/usr/bin/fim -T 9 {'-q ' if quiet else ''}-c " +
         f"'while (1) {{ display; sleep {slide_t}; next; }}' " +
-        os.path.join(upload_folder, rel_path, "*" if subcontents else ""),
-        shell=True
+        os.path.join(upload_folder, rel_path, "*" if subcontents else "")
     )
     # if start_result.stderr:
     #     response_text = start_result.stderr
