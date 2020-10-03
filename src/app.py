@@ -78,6 +78,7 @@ def delete_file(rel_fp):
     return Response("File deleted successfully", 200, mimetype="text/plain")
 
 
+fim
 slide_t = "10"
 quiet = True
 subcontents = False
@@ -87,37 +88,36 @@ subcontents = False
 @app.route("/slideshow/start/<path:rel_path>")
 # TODO: Support slideshow customization rather than all images in directory.
 def start_slideshow(rel_path=""):
-    # Use * for all subfolder contents vs. just current folder contents.
-    start_result = subprocess.run(
+    # Use * for all subfolder contents.
+    fim = subprocess.Popen(
         f"sudo fim -T 9 {'-q ' if quiet else ''}-c " +
         f"'while (1) {{ display; sleep {slide_t}; next; }}' " +
         os.path.join(upload_folder, rel_path, "*" if subcontents else ""),
-        shell=True, capture_output=True
+        shell=True
     )
-    if start_result.stderr:
-        response_text = start_result.stderr
-        response_code = 500
-    else:
-        response_text = f"Slideshow of /{rel_path + '/' if rel_path else ''} started"
-        response_code = 200
+    # if start_result.stderr:
+    #     response_text = start_result.stderr
+    #     response_code = 500
+    # else:
+    response_text = f"Slideshow of /{rel_path + '/' if rel_path else ''} started"
+    response_code = 200
     return Response(response_text, response_code, mimetype="text/plain")
 
 
 @app.route("/slideshow/stop")
 def stop_slideshow():
-    stop_result = subprocess.run(
-        "sudo pkill fim",
-        shell=True, capture_output=True
-    )
-    # Clear the framebuffer (assume the default framebuffer device fb0).
-    clear_result = subprocess.run(
+    fim.terminate()
+    # Clear the framebuffer (assume the default framebuffer device fb0). This
+    # will always produce a no space left on device error as the zeros device
+    # zero has infinite bytes.
+    subprocess.run(
         "sudo cp /dev/zero /dev/fb0",
-        shell=True, capture_output=True
+        shell=True
     )
-    if stop_result.stderr or clear_result.stderr:
-        response_text = stop_result.stderr if stop_result.stderr else clear_result.stderr
-        response_code = 500
-    else:
-        response_text = "Slideshow stopped"
-        response_code = 200
+    # if stop_result.stderr:
+    #     response_text = stop_result.stderr
+    #     response_code = 500
+    # else:
+    response_text = "Slideshow stopped"
+    response_code = 200
     return Response(response_text, response_code, mimetype="text/plain")
