@@ -79,8 +79,8 @@ def delete_file(rel_fp):
 
 
 slide_t = "10"
-quiet = true
-subcontents = false
+quiet = True
+subcontents = False
 
 
 @app.route("/slideshow/start/")
