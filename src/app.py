@@ -78,7 +78,6 @@ def delete_file(rel_fp):
     return Response("File deleted successfully", 200, mimetype="text/plain")
 
 
-fim
 slide_t = "10"
 quiet = True
 subcontents = False
@@ -89,7 +88,7 @@ subcontents = False
 # TODO: Support slideshow customization rather than all images in directory.
 def start_slideshow(rel_path=""):
     # Use * for all subfolder contents.
-    fim = subprocess.Popen(
+    global fim = subprocess.Popen(
         f"sudo fim -T 9 {'-q ' if quiet else ''}-c " +
         f"'while (1) {{ display; sleep {slide_t}; next; }}' " +
         os.path.join(upload_folder, rel_path, "*" if subcontents else ""),
