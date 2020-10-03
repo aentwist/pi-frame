@@ -108,6 +108,7 @@ def stop_slideshow():
     response_text = "Slideshow stopped"
     response_code = 200
 
+    global fim
     if not fim:
         response_text = "No slideshow"
         response_code = 500
