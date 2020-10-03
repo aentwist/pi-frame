@@ -83,7 +83,7 @@
                                         method="POST" enctype="multipart/form-data">
                                     {{ upload_form.csrf_token }}
                                     <div class="custom-file mb-2">
-                                        {{ upload_form.files(class="custom-file-input") }}
+                                        {{ upload_form.files(class="custom-file-input", accept="image/jpeg, image/png, image/gif") }}
                                         {{ upload_form.files.label(class="custom-file-label justify-content-start") }}
                                     </div>
                                     {{ upload_form.submit(class="btn btn-outline-primary btn-block") }}
