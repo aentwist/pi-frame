@@ -56,7 +56,7 @@ def get_file(rel_fp):
 @app.route("/file/post/<path:rel_path>", methods=["POST"])
 # TODO: Reload the current slideshow after uploading to its domain.
 def post_files(rel_path=""):
-    page = request.args["page"] if request.args["page"] else 1
+    page = request.args["page"] or 1
 
     form = UploadForm()
     if form.validate():
@@ -90,11 +90,11 @@ def start_slideshow(rel_path=""):
     # TODO: Check that the slideshow path has images to display.
     # Use * for all subfolder contents.
     pexpect.spawn(
-        f"fim -T 8 {'-q ' if quiet else ''}" +
+        f"sudo fim -T 8 {'-q ' if quiet else ''}" +
         f"-c 'while (1) {{ display; sleep {slide_t}; next; }}' " +
         os.path.join(upload_folder, rel_path, "*" if subcontents else "")
     )
-    response_text = f"Slideshow of /{rel_path + '/' if rel_path else ''} started"
+    response_text = f"Slideshow of /{rel_path or ''} started"
     response_code = 200
     return Response(response_text, response_code, mimetype="text/plain")
 
@@ -121,6 +121,6 @@ def stop_slideshow():
     #     # if stop_result.stderr:
     #     #     response_text = stop_result.stderr
     #     #     response_code = 500
-    response_text = pexpect.run("pkill fim")
+    response_text = pexpect.run("sudo pkill fim")
 
     return Response(response_text, response_code, mimetype="text/plain")
