@@ -6,7 +6,7 @@ from flask import request, Response, render_template, render_template_string,\
 from werkzeug.utils import secure_filename
 
 import os
-import subprocess
+import pexpect
 
 
 upload_folder = app.config["UPLOADS_DEFAULT_DEST"]
@@ -78,7 +78,7 @@ def delete_file(rel_fp):
     return Response("File deleted successfully", 200, mimetype="text/plain")
 
 
-slide_t = "10"
+slide_t = 10
 quiet = True
 subcontents = False
 
@@ -87,17 +87,13 @@ subcontents = False
 @app.route("/slideshow/start/<path:rel_path>")
 # TODO: Support slideshow customization rather than all images in directory.
 def start_slideshow(rel_path=""):
+    # TODO: Check that the slideshow path has images to display.
     # Use * for all subfolder contents.
-    global fim
-    fim = subprocess.Popen([
-        "/usr/bin/fim", "-T", "9", "-o", "fb", "-q" if quiet else "", "-c",
-        f"'while (1) {{ display; sleep {slide_t}; next; }}'",
+    pexpect.spawn(
+        f"fim -T 8 {'-q ' if quiet else ''}" +
+        f"-c 'while (1) {{ display; sleep {slide_t}; next; }}' " +
         os.path.join(upload_folder, rel_path, "*" if subcontents else "")
-    ])
-    # if start_result.stderr:
-    #     response_text = start_result.stderr
-    #     response_code = 500
-    # else:
+    )
     response_text = f"Slideshow of /{rel_path + '/' if rel_path else ''} started"
     response_code = 200
     return Response(response_text, response_code, mimetype="text/plain")
@@ -108,21 +104,23 @@ def stop_slideshow():
     response_text = "Slideshow stopped"
     response_code = 200
 
-    global fim
-    if not fim:
-        response_text = "No slideshow"
-        response_code = 500
-    else:
-        fim.kill()
-        # Clear the framebuffer (assume the default framebuffer device fb0). This
-        # will always produce a no space left on device error as the zeros device
-        # zero has infinite bytes.
-        subprocess.run(
-            "sudo cp /dev/zero /dev/fb0",
-            shell=True
-        )
-        # if stop_result.stderr:
-        #     response_text = stop_result.stderr
-        #     response_code = 500
+    # if not fim:
+    #     response_text = "No slideshow"
+    #     response_code = 500
+    # else:
+    #     fim.kill()
+    #     fim = None
+
+    #     # Clear the framebuffer (assume the default framebuffer device fb0). This
+    #     # will always produce a no space left on device error as the zeros device
+    #     # zero has infinite bytes.
+    #     subprocess.run(
+    #         "sudo cp /dev/zero /dev/fb0",
+    #         shell=True
+    #     )
+    #     # if stop_result.stderr:
+    #     #     response_text = stop_result.stderr
+    #     #     response_code = 500
+    response_text = pexpect.run("pkill fim")
 
     return Response(response_text, response_code, mimetype="text/plain")
