@@ -90,8 +90,8 @@ subcontents = False
 def start_slideshow(rel_path=""):
     # TODO: Check that the slideshow path has images to display.
     # Use * for all subfolder contents.
-    pexpect.spawn(
-        f'ssh {app.config[FRAME_USERNAME]}@{app.config[FRAME_HOST]} "' +
+    fim = pexpect.spawn(
+        f'ssh {app.config["FRAME_USERNAME"]}@{app.config["FRAME_HOST"]} "' +
         f"fim -T 8 {'-q ' if quiet else ''}" +
         f"-c 'while (1) {{ display; sleep {slide_t}; next; }}' " +
         os.path.join(upload_folder, rel_path, "*" if subcontents else "") +
@@ -107,7 +107,7 @@ def start_slideshow(rel_path=""):
 @app.route("/slideshow/stop")
 def stop_slideshow():
     pexpect.run(
-        f'ssh {app.config[FRAME_USERNAME]}@{app.config[FRAME_HOST]} "' +
+        f'ssh {app.config["FRAME_USERNAME"]}@{app.config["FRAME_HOST"]} "' +
         "pkill fim && " +
         "cp /dev/zero /dev/fb0" +
         '"'
