@@ -51,9 +51,11 @@ either 3. or 4.
 Storing images on a Pi driving a frame has the obvious advantage of requiring
 one less Pi, lowering the barrier for entry to just one Pi. On the other hand,
 using a different Pi can be advantageous if you would like to use physically
-larger storage devices (e.g. SSDs in a RAID setup with a `chron` job for
-backups) and would prefer not to keep said disks plugged into a Pi driving a
-frame.
+larger storage devices (e.g. SSDs in a
+[RAID](https://en.wikipedia.org/wiki/RAID "RAID - Wikipedia") setup with a
+[`cron`](https://linux.die.net/man/5/crontab "crontab(5) Linux man page") job
+for backups) and would prefer not to keep said disks plugged into a Pi driving
+a frame.
 
 The local options 1., 2., and 3. have the advantages of being one-time costs
 instead of a subscription and working with no internet access (LAN-based). The
@@ -62,6 +64,7 @@ backups that are not location-dependent.
 
 ## Requirements
 The minimum bill of materials is as follows:
+<!--TODO: Set up affiliate links.-->
 - 1x Raspberry Pi Zero W
 - 1x micro SD card
 - 1x 5V 1A micro USB power supply
@@ -74,7 +77,7 @@ The minimum bill of materials is as follows:
 This is good to set up a web interface with one digital picture frame. For each
 additional digital picture frame you will need another set of these materials.
 
-##### Optional
+#### Optional
 - 1x Pi 3B+ or 4 (with micro SD and appropriate power supply)
 - 2x+ disk (RAID, backups)
 - Cables to connect the disks to the Pi?
@@ -86,21 +89,23 @@ OR:
 `# TODO: Write an install script.`
 
 ### Download
-Download the project using [`git clone`][1] or as a compressed file ([.zip][2],
-[.tar.gz][3]).
-
-[1]: https://git-scm.com/docs/git-clone "Git - git-clone Documentation"
-[2]: https://github.com/andersonentwistle/full-frame/archive/master.zip
-[3]: https://github.com/andersonentwistle/full-frame/archive/master.tar.gz
+Download the project using
+[`git clone`](https://git-scm.com/docs/git-clone "Git - git-clone Documentation")
+or as a compressed file
+([.zip](https://github.com/andersonentwistle/pi-frame/archive/master.zip),
+[.tar.gz](https://github.com/andersonentwistle/pi-frame/archive/master.tar.gz)).
+```bash
+git clone https://github.com/andersonentwistle/pi-frame.git
+```
 
 ### Configuration
 Navigate to the project's root directory. Set the environment variable
-`FLASK_APP`.
+`FLASK_APP` to the absolute path of app.py.
 ```bash
 export FLASK_APP=$pwd/src/app.py
 ```
 
-##### Optional
+#### Optional
 - Use Pi-hole or set up a local DNS server to create a local DNS entry for the
   web interface (e.g. http://frame.local -> http://192.168.1.???)
 - Use NGINX as a reverse proxy for the Flask app
