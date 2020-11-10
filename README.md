@@ -23,8 +23,8 @@ the network from where they are stored to the web app, where they are then
 compressed and served to frame clients).
 
 <div align="center">
-    <img src="src/static/arch-clear.png" alt="Pi-frame architecture block diagram"
-             title="Pi-frame Architecture" />
+    <img src="src/static/arch.png" alt="Pi-frame architecture block diagram"
+            width="50%" title="Pi-frame Architecture" />
 </div>
 
 Architecture Options:
