@@ -23,7 +23,7 @@ the network from where they are stored to the web app, where they are then
 compressed and served to frame clients).
 
 <div align="center">
-    ![Architecture block diagram](src/static/arch-clear.png?raw=true "Architecture")
+    ![Architecture block diagram](./src/static/arch-clear.png "Architecture")
 </div>
 
 Architecture Options:
