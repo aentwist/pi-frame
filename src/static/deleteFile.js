@@ -11,7 +11,7 @@
 async function deleteFile(rel_path, fname, page) {
     let conf = confirm(`Are you sure you want to delete ${fname}? This operation cannot be undone.`);
     if (conf) {
-        let response = await fetch(`/file/delete/${rel_path}/${fname}`, {
+        let response = await fetch(`/file/delete/${!rel_path ? fname : rel_path + "/" + fname}`, {
             method: "DELETE"
         });
         let message = await response.text();

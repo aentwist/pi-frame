@@ -127,23 +127,23 @@
                             <div class="col-12 col-sm-6 col-md-4 col-lg-3 p-0">
                                 <div class="file mr-3 mb-3 p-0 border border-light text-left">
                                     <div class="file-icon-container flex-row align-items-center mr-3 pr-1 mb-3">
-                                        <a class="link-plain" href="{{ url_for('get_file', rel_fp=file if not rel_path else rel_path + '/' + file) }}" download>
+                                        <a class="link-plain" href="{{ url_for('get_file', rel_fp=file.full_fname if not rel_path else rel_path + '/' + file.full_fname) }}" download>
                                             <svg class="file-icon bi" fill="currentColor">
                                                 <use href="{{ url_for('static', filename='bootstrap-icons.svg') }}#box-arrow-in-down" />
                                             </svg>
                                         </a>
                                         <a role="button" title="Delete file"
-                                                onclick="deleteFile('{{ rel_path }}', '{{ file }}', {{ page }}); return false;">
+                                                onclick="deleteFile('{{ rel_path }}', '{{ file.full_fname }}', {{ page }}); return false;">
                                             <svg class="file-icon bi" fill="currentColor">
                                                 <use href="{{ url_for('static', filename='bootstrap-icons.svg') }}#trash" />
                                             </svg>
                                         </a>
                                     </div>
                                     <img class="file-img-top"
-                                            src="{{ url_for('get_file', rel_fp=file if not rel_path else rel_path + '/' + file) }}"
+                                            src="{{ url_for('get_thumbnail', rel_fp=file.thumbnail_fname if not rel_path else rel_path + '/' + file.thumbnail_fname) }}"
                                             alt="Image currently unavailable">
                                     <div class="bg-light border-top border-light pl-1">
-                                        <small class="text-muted">{{ file }}</small>
+                                        <small class="text-muted">{{ file.full_fname }}</small>
                                     </div>
                                 </div>
                             </div>
