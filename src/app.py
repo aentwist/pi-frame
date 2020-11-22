@@ -5,12 +5,20 @@ from flask import request, Response, render_template, render_template_string,\
         redirect, url_for, abort, flash, send_from_directory
 from werkzeug.utils import secure_filename
 
+from PIL import Image
+
 import os
 import pexpect
 import time
 
 
-upload_folder = app.config["UPLOADS_DEFAULT_DEST"]
+uploads_dir = app.config["UPLOADS_DEFAULT_DEST"]
+thumbnail_dir = os.path.join(uploads_dir, "thumbnail")
+full_dir = os.path.join(uploads_dir, "full")
+if not os.path.isdir(thumbnail_dir):
+    os.mkdir(thumbnail_dir) 
+if not os.path.isdir(full_dir):
+    os.mkdir(full_dir) 
 results_per_page = app.config["RESULTS_PER_PAGE"]
 
 
@@ -22,20 +30,22 @@ def root():
 @app.route("/folder/", methods=["GET", "POST"])
 @app.route("/folder/<path:rel_path>", methods=["GET", "POST"])
 def index(rel_path=""):
-    abs_path = os.path.join(upload_folder, rel_path)
+    thumbnail_path = os.path.join(thumbnail_dir, rel_path)
+    full_path = os.path.join(full_dir, rel_path)
     page = 1 if "page" not in request.args else int(request.args["page"])
 
     # Handle the page's folder manipulation forms.
     create_folder_form = CreateFolderForm()
     if create_folder_form.create_folder_submit.data and create_folder_form.validate():
-        folder_path = os.path.join(abs_path, create_folder_form.folder_name.data)
-        os.mkdir(folder_path)
+        os.mkdir(os.path.join(thumbnail_path, create_folder_form.folder_name.data))
+        os.mkdir(os.path.join(full_path, create_folder_form.folder_name.data))
         return redirect(url_for("index", rel_path=rel_path, page=page))
 
     # Display the contents of the current directory.
-    if not os.path.isdir(abs_path):
+    if not os.path.isdir(full_path):
         abort(404)
-    _, dirs, files = next(os.walk(abs_path))
+    _, dirs, fnames = next(os.walk(full_path))
+    files = [{"thumbnail_fname": f"{os.path.splitext(fname)[0]}.webp", "full_fname": fname} for fname in fnames]
     file_count = len(files)
     page_start = (page - 1) * results_per_page
     page_end = min(page * results_per_page, file_count)
@@ -46,11 +56,18 @@ def index(rel_path=""):
             upload_form=UploadForm(), create_folder_form=create_folder_form)
 
 
-@app.route("/file/get/<path:rel_fp>")
+@app.route("/file/get/full/<path:rel_fp>")
 def get_file(rel_fp):
     rel_path, fname = os.path.split(rel_fp)
-    abs_path = os.path.join(upload_folder, rel_path)
-    return send_from_directory(abs_path, fname)
+    abs_path = os.path.join(full_dir, rel_path)
+    return send_from_directory(abs_path, fname, mimetype="image/jpeg")
+
+
+@app.route("/file/get/thumbnail/<path:rel_fp>")
+def get_thumbnail(rel_fp):
+    rel_path, fname = os.path.split(rel_fp)
+    abs_path = os.path.join(thumbnail_dir, rel_path)
+    return send_from_directory(abs_path, fname, mimetype="image/webp")
 
 
 @app.route("/file/post/", methods=["POST"])
@@ -61,9 +78,14 @@ def post_files(rel_path=""):
 
     form = UploadForm()
     if form.validate():
+        _, full_name = os.path.split(full_dir)
         for f in form.files.data:
             fname = secure_filename(f.filename)
-            images.save(f, rel_path, fname)
+            fname_no_ext, _ = os.path.splitext(fname)
+            images.save(f, os.path.join(full_name, rel_path), fname)
+            im = Image.open(f)
+            im.thumbnail((99999, 1080))
+            im.save( os.path.join(thumbnail_dir, rel_path, f"{fname_no_ext}.webp"), method=6)
         flash("Files uploaded successfully")
         # Redirect to follow the post, redirect, get pattern.
         return redirect(url_for("index", rel_path=rel_path, page=page))
@@ -72,10 +94,14 @@ def post_files(rel_path=""):
 @app.route("/file/delete/<path:rel_fp>", methods=["DELETE"])
 # TODO: Use safe_filename?
 def delete_file(rel_fp):
-    abs_fp = os.path.join(upload_folder, rel_fp)
-    if not os.path.isfile(abs_fp):
-        return Response("Error: File not found", 404, mimetype="text/plain")
-    os.remove(abs_fp)
+    full_fp = os.path.join(full_dir, rel_fp)
+    rel_path, fname = os.path.split(rel_fp)
+    fname_no_ext, _ = os.path.splitext(fname)
+    thumbnail_fp = os.path.join(thumbnail_dir, rel_path, f"{fname_no_ext}.webp")
+    if not os.path.isfile(full_fp) or not os.path.isfile(thumbnail_fp):
+        return Response(f"Error: File {fname} not found", 404, mimetype="text/plain")
+    os.remove(full_fp)
+    os.remove(thumbnail_fp)
     return Response("File deleted successfully", 200, mimetype="text/plain")
 
 
@@ -94,7 +120,7 @@ def start_slideshow(rel_path=""):
         f'ssh {app.config["FRAME_USERNAME"]}@{app.config["FRAME_HOST"]} "' +
         f"fim -T 8 {'-q ' if quiet else ''}" +
         f"-c 'while (1) {{ display; sleep {slide_t}; next; }}' " +
-        os.path.join(upload_folder, rel_path, "*" if subcontents else "") +
+        os.path.join(full_dir, rel_path, "*" if subcontents else "") +
         '"'
     )
     time.sleep(2)
