@@ -84,7 +84,7 @@ def post_files(rel_path=""):
             fname_no_ext, _ = os.path.splitext(fname)
             images.save(f, os.path.join(full_name, rel_path), fname)
             im = Image.open(f)
-            im.thumbnail((99999, 1080))
+            im.thumbnail((99999, 540))
             im.save( os.path.join(thumbnail_dir, rel_path, f"{fname_no_ext}.webp"), method=6)
         flash("Files uploaded successfully")
         # Redirect to follow the post, redirect, get pattern.
