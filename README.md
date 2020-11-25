@@ -24,7 +24,7 @@ compressed and served to frame clients).
 
 <br />
 <div align="center">
-    <img src="src/static/arch.png" alt="Pi-frame architecture block diagram"
+    <img src="src/static/architecture/arch.png" alt="Pi-frame architecture block diagram"
             width="40%" title="Pi-frame Architecture" />
 </div>
 
