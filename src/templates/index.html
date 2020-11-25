@@ -7,7 +7,7 @@
         <title>{{ "/" + rel_path }}</title>
         <meta name="description" content="{{ path }}">
 
-        <link rel="stylesheet" href="/static/bootstrap.css">
+        <link rel="stylesheet" href="/static/pi-frame-bootstrap.css">
         <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
 
         <script defer
@@ -18,7 +18,7 @@
                 src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
                 integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
                 crossorigin="anonymous"></script>
-        <script defer src="/static/bootstrap.js"></script>
+        <script defer src="/static/pi-frame-bootstrap.js"></script>
         <script defer src="{{ url_for('static', filename='deleteFile.js') }}"></script>
         <script defer src="{{ url_for('static', filename='slideshow.js') }}"></script>
     </head>
@@ -44,17 +44,17 @@
                     <div>
                         <a role="button" title="Go back" onclick="window.history.back();">
                             <svg class="browser-icon bi" fill="currentcolor">
-                                <use href="{{ url_for('static', filename='bootstrap-icons.svg') }}#arrow-left" />
+                                <use href="{{ url_for('static', filename='pi-frame-bootstrap-icons.svg') }}#arrow-left" />
                             </svg>
                         </a>
                         <a role="button" title="Go forward" onclick="window.history.forward();">
                             <svg class="browser-icon bi" fill="currentcolor">
-                                <use href="{{ url_for('static', filename='bootstrap-icons.svg') }}#arrow-right" />
+                                <use href="{{ url_for('static', filename='pi-frame-bootstrap-icons.svg') }}#arrow-right" />
                             </svg>
                         </a>
                         <a role="button" title="Go up" onclick="">
                             <svg class="browser-icon bi" fill="currentcolor">
-                                <use href="{{ url_for('static', filename='bootstrap-icons.svg') }}#arrow-up" />
+                                <use href="{{ url_for('static', filename='pi-frame-bootstrap-icons.svg') }}#arrow-up" />
                             </svg>
                         </a>
                     </div>
@@ -64,7 +64,7 @@
                             <li>
                                 <a class="link-plain" href="{{ url_for('index', rel_path=rel_path + '/' + dir, page=page) }}">
                                     <svg class="dir-icon bi" fill="currentColor">
-                                        <use href="{{ url_for('static', filename='bootstrap-icons.svg') }}#folder" />
+                                        <use href="{{ url_for('static', filename='pi-frame-bootstrap-icons.svg') }}#folder" />
                                     </svg>
                                     {{ dir }}
                                 </a>
@@ -129,13 +129,13 @@
                                     <div class="file-icon-container flex-row align-items-center mr-3 pr-1 mb-3">
                                         <a class="link-plain" href="{{ url_for('get_file', rel_fp=file.full_fname if not rel_path else rel_path + '/' + file.full_fname) }}" download>
                                             <svg class="file-icon bi" fill="currentColor">
-                                                <use href="{{ url_for('static', filename='bootstrap-icons.svg') }}#box-arrow-in-down" />
+                                                <use href="{{ url_for('static', filename='pi-frame-bootstrap-icons.svg') }}#box-arrow-in-down" />
                                             </svg>
                                         </a>
                                         <a role="button" title="Delete file"
                                                 onclick="deleteFile('{{ rel_path }}', '{{ file.full_fname }}', {{ page }}); return false;">
                                             <svg class="file-icon bi" fill="currentColor">
-                                                <use href="{{ url_for('static', filename='bootstrap-icons.svg') }}#trash" />
+                                                <use href="{{ url_for('static', filename='pi-frame-bootstrap-icons.svg') }}#trash" />
                                             </svg>
                                         </a>
                                     </div>
