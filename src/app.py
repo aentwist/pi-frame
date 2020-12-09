@@ -2,7 +2,7 @@ from . import app, images
 from .forms import UploadForm, CreateFolderForm
 
 from flask import request, Response, render_template, render_template_string,\
-        redirect, url_for, abort, flash, send_from_directory
+        redirect, url_for, abort, flash, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
 
 from PIL import Image
@@ -20,6 +20,21 @@ if not os.path.isdir(thumbnail_dir):
 if not os.path.isdir(full_dir):
     os.mkdir(full_dir) 
 results_per_page = app.config["RESULTS_PER_PAGE"]
+
+
+# https://pillow.readthedocs.io/en/stable/handbook/image-file-formats.html#fully-supported-formats
+def allowed_file(filename):
+    # TODO: Add all file extensions of the said formats.
+    lst = [
+        "bmp", "dib",
+        "eps", "gif", "icns", "ico", "im",
+        "jpeg", "jpg", "jpe",
+        "jp2", "jpg2", "jpf", "jpx",
+        "msp", "pcx",
+        "png",
+        "ppm", "sgi", "spider", "tga", "tiff", "webp", "xbm"
+    ]
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in lst
 
 
 @app.route("/")
@@ -73,22 +88,24 @@ def get_thumbnail(rel_fp):
 @app.route("/file/post/", methods=["POST"])
 @app.route("/file/post/<path:rel_path>", methods=["POST"])
 # TODO: Reload the current slideshow after uploading to its domain.
+# TODO: Limit the uploaded file size.
 def post_files(rel_path=""):
-    page = request.args["page"] or 1
+    if "file" not in request.files:
+        return jsonify({"message": "No file part"}), 500
+    file = request.files["file"]
+    if not file.filename:
+        return jsonify({"message": "No selected files"}), 500
+    if not allowed_file(file.filename):
+        return jsonify({"message": "File type not allowed"}), 500
 
-    form = UploadForm()
-    if form.validate():
-        _, full_name = os.path.split(full_dir)
-        for f in form.files.data:
-            fname = secure_filename(f.filename)
-            fname_no_ext, _ = os.path.splitext(fname)
-            images.save(f, os.path.join(full_name, rel_path), fname)
-            im = Image.open(f)
-            im.thumbnail((99999, 480))
-            im.save(os.path.join(thumbnail_dir, rel_path, f"{fname_no_ext}.webp"), method=6)
-        flash("Files uploaded successfully")
-        # Redirect to follow the post, redirect, get pattern.
-        return redirect(url_for("index", rel_path=rel_path, page=page))
+    fname = secure_filename(file.filename)
+    fname_no_ext, _ = os.path.splitext(fname)
+    file.save(os.path.join(full_dir, rel_path, fname))
+    im = Image.open(file)
+    im.thumbnail((99999, 480))
+    im.save(os.path.join(thumbnail_dir, rel_path, f"{fname_no_ext}.webp"), method=6)
+
+    return jsonify({"message": "Success"})
 
 
 @app.route("/file/delete/<path:rel_fp>", methods=["DELETE"])
