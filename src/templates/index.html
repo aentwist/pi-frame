@@ -19,6 +19,7 @@
                 integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
                 crossorigin="anonymous"></script>
         <script defer src="/static/bootstrap.slim.js"></script>
+        <script defer src="{{ url_for('static', filename='index.js') }}" type="module"></script>
         <script defer src="{{ url_for('static', filename='deleteFile.js') }}"></script>
         <script defer src="{{ url_for('static', filename='slideshow.js') }}"></script>
     </head>
@@ -76,19 +77,12 @@
                 <section id="menu" class="collapse navbar navbar-light align-items-start">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" data-toggle="collapse" href="#upload" role="button"
-                                    aria-expanded="false" aria-controls="upload">Upload</a>
-                            <div id="upload" class="collapse">
-                                <form class="form-inline" action="{{ url_for('post_files', rel_path=rel_path, page=page) }}"
-                                        method="POST" enctype="multipart/form-data">
-                                    {{ upload_form.csrf_token }}
-                                    <div class="custom-file mb-2">
-                                        {{ upload_form.files(class="custom-file-input", accept="image/jpeg, image/png, image/gif") }}
-                                        {{ upload_form.files.label(class="custom-file-label justify-content-start") }}
-                                    </div>
-                                    {{ upload_form.submit(class="btn btn-outline-primary btn-block") }}
-                                </form>
-                            </div>
+                            <input id="fileInput" name="file" class="d-none" type="file" multiple>
+                            <button id="fileSelect" class="btn btn-outline-primary">Select Files</button>
+                            <a id="fileSubmit" class="btn btn-outline-primary ml-2"
+                                    href="{{ url_for('post_files', rel_path=rel_path, page=page) }}"
+                                    onclick="event.preventDefault();">Upload</a>
+                            <div id="uploadStatus"></div>
                         </li>
                         <li class="nav-item"><a class="nav-link" href="#">Download</a></li>
                         <li class="nav-item"><a class="nav-link" href="#">Delete</a></li>

@@ -5,4 +5,4 @@ services:
     environment:
       - FLASK_ENV=development
     volumes:
-      - ./src:/var/www/full-frame/src
+      - ./src:/var/www/pi-frame/src
