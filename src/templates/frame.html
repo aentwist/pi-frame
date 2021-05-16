@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Frame</title>
+        <meta name="description" content="Description">
+
+        <!-- Stylesheets -->
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                width: 100%;
+            }
+
+            main {
+                padding: 2rem;
+                height: 100vh;
+                display: flex;  /* Prevent whitespace around inline-block elements. */
+                background: #fefefe;
+            }
+
+            img {
+                width: 100%;
+                object-fit: contain;
+            }
+        </style>
+
+        <!-- Scripts -->
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const socket = new WebSocket("ws://localhost:5000/echo");
+                socket.addEventListener("open", () => {
+                    socket.send("open!");
+                });
+                socket.addEventListener("message", e => {
+                    console.log(e.data);
+                });
+                // const img = document.querySelector("img");
+                // sock.addEventListener("message", e => {
+                //     img.src = e.data;
+                // });
+            });
+        </script>
+    </head>
+
+    <body>
+        <main>
+            <img src="{{ url_for('static', filename='architecture/architecture.png') }}" alt="Current slideshow image">
+        </main>
+    </body>
+</html>

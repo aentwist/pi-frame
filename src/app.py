@@ -1,10 +1,9 @@
-from . import app, images
-from .forms import UploadForm, CreateFolderForm
+from __init__ import app, images, sockets
+from forms import UploadForm, CreateFolderForm
 
 from flask import request, Response, render_template, render_template_string,\
         redirect, url_for, abort, flash, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
-
 from PIL import Image
 
 import os
@@ -69,6 +68,18 @@ def index(rel_path=""):
             files=files[page_start:page_end], file_count=file_count,
             page=page, results_per_page=results_per_page,
             upload_form=UploadForm(), create_folder_form=create_folder_form)
+
+
+@app.route("/frame")
+def frame():
+    return render_template("frame.html")
+
+
+@sockets.route("/echo")
+def echo(ws):
+    while not ws.closed:
+        message = ws.receive()
+        ws.send(message)
 
 
 @app.route("/file/get/full/<path:rel_fp>")
@@ -159,3 +170,10 @@ def stop_slideshow():
     response_text = "Slideshow stopped"
     response_code = 200
     return Response(response_text, response_code, mimetype="text/plain")
+
+
+if __name__ == "__main__":
+    from gevent import pywsgi
+    from geventwebsocket.handler import WebSocketHandler
+    server = pywsgi.WSGIServer(('', 5000), app, handler_class=WebSocketHandler)
+    server.serve_forever()

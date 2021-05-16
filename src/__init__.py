@@ -1,11 +1,13 @@
 from flask import Flask
 from .config import DevConfig, TestConfig, ProdConfig
 from flask_uploads import configure_uploads, UploadSet, IMAGES
+from flask_sockets import Sockets
 
 import os
 
 
 app = Flask(__name__)
+sockets = Sockets(app)
 
 # Create the app configuration.
 env = app.config["ENV"]
